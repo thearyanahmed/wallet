@@ -3,7 +3,6 @@ package oauth
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/thearyanahmed/wallet/internal/reminder"
 	"gopkg.in/oauth2.v3/errors"
 	"gopkg.in/oauth2.v3/manage"
@@ -12,6 +11,7 @@ import (
 	"gopkg.in/oauth2.v3/store"
 	"log"
 	"net/http"
+	"os"
 )
 
 var Server *server.Server
@@ -73,20 +73,20 @@ func Auth(f http.HandlerFunc, srv *server.Server) http.HandlerFunc {
 }
 
 func demoCredentails (w http.ResponseWriter, r *http.Request) {
-	//clientId := uuid.New().String()[:8]
-	//clientSecret := uuid.New().String()[:8]
 
-	clientId := uuid.New().String()[:8]
-	clientSecret := uuid.New().String()[:8]
+	clientId := os.Getenv("CLIENT_ID")
+	clientSecret := os.Getenv("CLIENT_SECRET")
+	clientDomain := os.Getenv("CLIENT_DOMAIN")
 
 	err := clientStore.Set(clientId, &models.Client{
 		ID:     clientId,
 		Secret: clientSecret,
-		Domain: "http://localhost:8000",
+		Domain: clientDomain,
 	})
 
 	if err != nil {
 		fmt.Println(err.Error())
+		panic(err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
