@@ -1,9 +1,9 @@
 package oauth
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/thearyanahmed/wallet/internal/reminder"
+	"github.com/thearyanahmed/wallet/internal/res"
 	"gopkg.in/oauth2.v3/errors"
 	"gopkg.in/oauth2.v3/manage"
 	"gopkg.in/oauth2.v3/models"
@@ -12,15 +12,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
-var Server *server.Server
-var clientStore *store.ClientStore
+var (
+	Server *server.Server
+	clientStore *store.ClientStore
+)
+
+const (
+	accessTokenExpiresIn = time.Hour * 24 * 30
+	refreshTokenExpires = time.Hour * 24 * 45
+)
 
 func Boot() {
 
 	manager := manage.NewDefaultManager()
-	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
+
+	manager.SetAuthorizeCodeTokenCfg(&manage.Config{
+		AccessTokenExp:    accessTokenExpiresIn,
+		RefreshTokenExp:   refreshTokenExpires,
+		IsGenerateRefresh: false,
+	})
 
 	// token memory store
 	manager.MustTokenStorage(store.NewMemoryTokenStore())
@@ -59,7 +72,6 @@ func serveToken(w http.ResponseWriter, r *http.Request) {
 	Server.HandleTokenRequest(w, r)
 }
 
-
 func Auth(f http.HandlerFunc, srv *server.Server) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, err := srv.ValidationBearerToken(r)
@@ -89,8 +101,15 @@ func demoCredentails (w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"CLIENT_ID": clientId, "CLIENT_SECRET": clientSecret})
+	data := struct {
+		ClientId string `json:"client_id"`
+		ClientSecret string `json:"client_secret"`
+	}{
+		ClientId: clientId,
+		ClientSecret: clientSecret,
+	}
+
+	res.Send(w,"Successfully done.",data,200)
 }
 
 
