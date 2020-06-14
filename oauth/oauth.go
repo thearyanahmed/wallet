@@ -21,18 +21,43 @@ var (
 )
 
 const (
-	accessTokenExpiresIn = time.Hour * 24 * 30
+	accessTokenExpiresIn = time.Hour * 24 * 23
 	refreshTokenExpires = time.Hour * 24 * 45
 )
+
+func init() {
+	reminder.Remind(fmt.Sprintf("[+] \nThe appliaction is set for one and one application only. It does not hold any state for currently logged in user other than one and only one.Validating a route with oauth.Auth will not authorize about the requeted resource."))
+}
 
 func Boot() {
 
 	manager := manage.NewDefaultManager()
 
-	manager.SetAuthorizeCodeTokenCfg(&manage.Config{
-		AccessTokenExp:    accessTokenExpiresIn,
-		RefreshTokenExp:   refreshTokenExpires,
-		IsGenerateRefresh: false,
+	manager.SetAuthorizeCodeExp(time.Minute * 10)
+
+	cfg := &manage.Config{
+		// access token expiration time
+		AccessTokenExp: time.Hour * 2,
+		// refresh token expiration time
+		RefreshTokenExp: time.Hour * 24 * 3,
+		// whether to generate the refreshing token
+		IsGenerateRefresh: true,
+	}
+	manager.SetAuthorizeCodeTokenCfg(cfg)
+
+	manager.SetClientTokenCfg(&manage.Config{
+		AccessTokenExp:    time.Hour * 100,
+		RefreshTokenExp:   time.Hour * 120,
+		IsGenerateRefresh: true,
+	})
+
+	manager.SetRefreshTokenCfg(&manage.RefreshingConfig{
+		AccessTokenExp:     accessTokenExpiresIn,
+		RefreshTokenExp:    refreshTokenExpires,
+		IsGenerateRefresh:  true,
+		IsResetRefreshTime: true,
+		IsRemoveAccess:     true,
+		IsRemoveRefreshing: false,
 	})
 
 	// token memory store
@@ -43,11 +68,9 @@ func Boot() {
 
 	manager.MapClientStorage(clientStore)
 
-	Server := server.NewDefaultServer(manager)
+	Server = server.NewServer(server.NewConfig(),manager)
 	Server.SetAllowGetAccessRequest(true)
 	Server.SetClientInfoHandler(server.ClientFormHandler)
-
-	manager.SetRefreshTokenCfg(manage.DefaultRefreshTokenCfg)
 
 	Server.SetInternalErrorHandler(func(err error) (re *errors.Response) {
 		reminder.Remind("[+] Setup application logger. Setting internal error handler.")
@@ -72,9 +95,10 @@ func serveToken(w http.ResponseWriter, r *http.Request) {
 	Server.HandleTokenRequest(w, r)
 }
 
-func Auth(f http.HandlerFunc, srv *server.Server) http.HandlerFunc {
+// At the moment, this auth is set for one client and one client only.
+func Auth(f http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := srv.ValidationBearerToken(r)
+		_, err := Server.ValidationBearerToken(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return

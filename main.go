@@ -26,7 +26,7 @@ func main() {
 
 	http.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, I'm protected"))
-	}, oauth.Server))
+	}))
 
 	log.Fatal(http.ListenAndServe(":9096", nil))
 }
