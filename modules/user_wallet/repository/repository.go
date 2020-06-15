@@ -1,15 +1,15 @@
-package user_wallet
+package repository
 
 import (
 	"fmt"
 	"github.com/thearyanahmed/wallet/schema"
 )
 
-type UserWallet struct {
+type UserWalletRepository struct {
 	schema.UserWallet
 }
 
-func (uw *UserWallet) Test() {
+func (uwr *UserWalletRepository) Test() {
 	fmt.Println("ello world")
 }
 

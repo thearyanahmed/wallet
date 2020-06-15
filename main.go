@@ -5,6 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/internal/reminder"
+	"github.com/thearyanahmed/wallet/modules/user_wallet/api"
 	"github.com/thearyanahmed/wallet/oauth"
 	"github.com/thearyanahmed/wallet/schema"
 	"log"
@@ -50,6 +51,9 @@ func main() {
 }
 
 func registerRoutes() {
+
+	api.RegisterRoutes()
+
 	http.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, I'm protected."))
 	}))
