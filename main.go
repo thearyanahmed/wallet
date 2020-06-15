@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/internal/reminder"
 	"github.com/thearyanahmed/wallet/oauth"
+	"github.com/thearyanahmed/wallet/schema"
 	"log"
 	"net/http"
 	"os"
@@ -38,7 +38,8 @@ func main() {
 
 	fmt.Println("Migrating.")
 
-	migrate(db)
+	schema.Migrate()
+
 	fmt.Println("Migration completed.")
 
 	defer db.Close()
@@ -52,15 +53,7 @@ func registerRoutes() {
 	http.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, I'm protected."))
 	}))
-
 }
-
-func migrate(db *gorm.DB) {
-	//db.AutoMigrate(&model.User{})
-	//db.AutoMigrate(&model2.Account{})
-	//db.AutoMigrate(&model3.UserWallet{})
-}
-
 
 func loadEnvOrExit() {
 	err := godotenv.Load()
