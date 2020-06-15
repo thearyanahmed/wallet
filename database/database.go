@@ -3,12 +3,17 @@ package database
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	 _ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"os"
 )
-var db *gorm.DB
 
-func Connect() error {
+type manager struct {
+	db *gorm.DB
+}
+
+var Manager manager
+
+func Connect() ( *gorm.DB, error ) {
 	username := os.Getenv("DB_USERNAME")
 	password := os.Getenv("DB_PASSWORD")
 	database := os.Getenv("DB_DATABASE")
@@ -18,12 +23,12 @@ func Connect() error {
 	db, err := gorm.Open("mysql", prepareConnectionString(username, password, database, host, port))
 
 	if err != nil {
-		return err
+		return nil,err
 	}
 
 	bootsrap(db)
-
-	return nil
+	Manager = manager{db: db}
+	return db, nil
 }
 
 func bootsrap(database *gorm.DB) {
@@ -31,11 +36,11 @@ func bootsrap(database *gorm.DB) {
 }
 
 func DB () *gorm.DB {
-	return db
+	return Manager.db
 }
 
 func Close() {
-	db.Close()
+	Manager.db.Close()
 }
 
 func prepareConnectionString(username, password, database, host, port string) string {
@@ -44,3 +49,5 @@ func prepareConnectionString(username, password, database, host, port string) st
 		username,password,host,port,database,
 	)
 }
+
+
