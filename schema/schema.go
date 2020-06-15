@@ -12,10 +12,6 @@ type User struct {
 	Email string `gorm:"type:varchar(100);column:email;unique;not null" json:"email"`
 }
 
-func (User) TableName() string {
-	return "users"
-}
-
 type Account struct {
 	gorm.Model
 	UserID int32 `gorm:"type:integer;column:user_id;not null" json:"user_id"`
@@ -26,10 +22,6 @@ type Account struct {
 
 	User User `gorm:"foreignkey:UserID"`
 	Wallets []UserWallet `gorm:"foreignkey:WalletID"`
-}
-
-func (Account) TableName() string {
-	return "accounts"
 }
 
 type UserWallet struct {
@@ -55,22 +47,7 @@ type Currency struct {
 
 	Code string `gorm:"type:varchar(5);not null;unique" json:"code"` // USD
 	Symbol string `gorm:"type:varchar(5);not null" json:"symbol"` // $
-	CountryID int16 `gorm:"type:integer(3);column:country_id;not null" json:"country_id"`
 }
-
-func (Currency) TableName() string {
-	return "currencies"
-}
-
-type Country struct {
-	gorm.Model
-
-	Name string `gorm:"type:varchar(100);not null" json:"name"`
-	Flag string `gorm:"type:varchar(255)" json:"flag"`
-
-	Currency Currency `gorm:"foreignkey:CountryID" json:"currency_id"`
-}
-
 
 func Migrate() {
 	db := database.DB()
@@ -78,6 +55,5 @@ func Migrate() {
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Account{})
 	db.AutoMigrate(&UserWallet{})
-	db.AutoMigrate(&Country{}) 
 	db.AutoMigrate(&Currency{})
 }
