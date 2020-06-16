@@ -45,7 +45,6 @@ func main() {
 
 	defer db.Close()
 
-
 	registerRoutes()
 	log.Fatal(http.ListenAndServe(":9096", nil))
 }

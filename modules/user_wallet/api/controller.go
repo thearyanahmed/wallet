@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/thearyanahmed/wallet/internal/res"
 	"net/http"
 )
@@ -11,5 +10,5 @@ func controllerOneFunc(w http.ResponseWriter,r *http.Request) {
 }
 
 func anotherEndpont(w http.ResponseWriter,r *http.Request) {
-	fmt.Println("Hello world")
+	res.Send(w,"Service of user",nil,200)
 }
