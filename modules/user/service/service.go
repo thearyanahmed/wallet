@@ -19,8 +19,6 @@ type UserService struct {
 
 func SomethingElse() {
 	userSvc := UserService{}
-
 	userSvc.SomeAccountServiceFunction()
-
 	service.CallThisAccountService()
 }

@@ -3,6 +3,7 @@ package schema
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/thearyanahmed/wallet/database"
+	"time"
 )
 
 type User struct {
@@ -43,11 +44,20 @@ func (UserWallet) TableName() string {
 }
 
 type Currency struct {
-	gorm.Model
-
+	ID        uint `gorm:"primary_key" json:"id"`
 	Code string `gorm:"type:varchar(5);not null;unique" json:"code"` // USD
 	Symbol string `gorm:"type:varchar(5);not null" json:"symbol"` // $
+
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
 }
+
+
+func (Currency) TableName() string {
+	return "currencies"
+}
+
 
 func Migrate() {
 	db := database.DB()
