@@ -1,9 +1,12 @@
 package api
 
-import "net/http"
+import (
+	"github.com/thearyanahmed/wallet/oauth"
+	"net/http"
+)
 
 func RegisterRoutes() {
 	handler := NewHandler()
 
-	http.HandleFunc("/currencies",handler.currencies)
+	http.HandleFunc("/currencies",oauth.Auth(handler.currencies))
 }

@@ -100,7 +100,7 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, err := Server.ValidationBearerToken(r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			res.SendError(w,"Unauthorized.",nil,http.StatusUnauthorized)
 			return
 		}
 
