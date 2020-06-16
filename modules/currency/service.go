@@ -1,4 +1,4 @@
-package api
+package currency
 
 import (
 	"github.com/thearyanahmed/wallet/schema"

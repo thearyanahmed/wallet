@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/thearyanahmed/wallet/modules/account/repository"
-	"github.com/thearyanahmed/wallet/modules/user/service"
+	"github.com/thearyanahmed/wallet/modules/user/api"
 )
 
 func TestAccountServic() {
@@ -15,7 +15,7 @@ func CallThisAccountService(){
 }
 
 func FinalTest() {
-	service.TestHumanService()
+	api.TestHumanService()
 }
 
 type AccountService struct {

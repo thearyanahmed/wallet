@@ -1,4 +1,4 @@
-package api
+package currency
 
 import (
 	"fmt"
@@ -19,6 +19,5 @@ func (cr *currencyRepository) Currencies() ( []schema.Currency, error ) {
 		return nil, err
 	}
 
-	fmt.Println(records)
 	return records, nil
 }

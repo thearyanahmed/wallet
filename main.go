@@ -5,7 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/internal/reminder"
-	currenciesApi "github.com/thearyanahmed/wallet/modules/currency/api"
+	"github.com/thearyanahmed/wallet/modules/currency"
 	walletApi "github.com/thearyanahmed/wallet/modules/user_wallet/api"
 	"github.com/thearyanahmed/wallet/oauth"
 	"github.com/thearyanahmed/wallet/schema"
@@ -52,7 +52,7 @@ func main() {
 
 func registerRoutes() {
 
-	currenciesApi.RegisterRoutes()
+	currency.RegisterRoutes()
 	walletApi.RegisterRoutes()
 
 	http.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {
