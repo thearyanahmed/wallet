@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/internal/reminder"
@@ -25,7 +26,6 @@ var (
 
 func main() {
 	loadEnvOrExit()
-	oauth.Boot()
 
 	lock.Lock()
 
@@ -46,16 +46,20 @@ func main() {
 
 	defer db.Close()
 
-	registerRoutes()
-	log.Fatal(http.ListenAndServe(":9096", nil))
+	router := mux.NewRouter()
+
+	oauth.Boot(router)
+	registerRoutes(router)
+
+	log.Fatal(http.ListenAndServe(":9096", router))
 }
 
-func registerRoutes() {
+func registerRoutes(router *mux.Router) {
 
-	currency.RegisterRoutes()
-	walletApi.RegisterRoutes()
+	currency.RegisterRoutes(router)
+	walletApi.RegisterRoutes(router)
 
-	http.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, I'm protected."))
 	}))
 }

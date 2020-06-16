@@ -1,7 +1,6 @@
 package currency
 
 import (
-	"github.com/thearyanahmed/wallet/internal/req"
 	"github.com/thearyanahmed/wallet/internal/res"
 	"net/http"
 )
@@ -16,11 +15,11 @@ func NewHandler() *handler {
 
 func (handler *handler) currencies(w http.ResponseWriter,r *http.Request) {
 
-	invalid := req.ReturnIfInvalidMethod(r,req.GET,w)
-
-	if invalid {
-		return
-	}
+	//invalid := req.ReturnIfInvalidMethod(r,req.GET,w)
+	//
+	//if invalid {
+	//	return
+	//}
 
 	currencies, err := handler.currencyService.Currencies()
 

@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/thearyanahmed/wallet/internal/reminder"
 	"github.com/thearyanahmed/wallet/internal/res"
 	"gopkg.in/oauth2.v3/errors"
@@ -29,7 +30,7 @@ func init() {
 	reminder.Remind(fmt.Sprintf("[+] \nThe appliaction is set for one and one application only. It does not hold any state for currently logged in user other than one and only one.Validating a route with oauth.Auth will not authorize about the requeted resource."))
 }
 
-func Boot() {
+func Boot(router *mux.Router) {
 
 	manager := manage.NewDefaultManager()
 
@@ -83,12 +84,12 @@ func Boot() {
 		log.Println("Response Error:", re.Error.Error())
 	})
 
-	registerOAuthRoutes()
+	registerOAuthRoutes(router)
 }
 
-func registerOAuthRoutes() {
-	http.HandleFunc("/token", serveToken)
-	http.HandleFunc("/demo/credentails",demoCredentails)
+func registerOAuthRoutes(router *mux.Router) {
+	router.HandleFunc("/token", serveToken)
+	router.HandleFunc("/demo/credentails",demoCredentails)
 }
 
 func serveToken(w http.ResponseWriter, r *http.Request) {
