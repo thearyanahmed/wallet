@@ -5,6 +5,11 @@ import (
 	"github.com/thearyanahmed/wallet/database"
 	"time"
 )
+// Future feature
+const (
+	UserActive = 1
+	UserRestricted = 2
+)
 
 type User struct {
 	gorm.Model
@@ -30,6 +35,7 @@ type Account struct {
 
 	User User `gorm:"foreignkey:UserID"`
 	Wallets []UserWallet `gorm:"foreignkey:WalletID"`
+	Organization Organization `gorm:"foreignkey:OrgID"`
 }
 
 type UserWallet struct {
@@ -65,6 +71,17 @@ func (Currency) TableName() string {
 	return "currencies"
 }
 
+type Organization struct {
+	ID        uint `gorm:"primary_key" json:"id"`
+	Name string `gorm:"type:varchar(50);not null;unique" json:"name"` // USD
+	UserID uint32 `gorm:"type:integer;not null" json:"user_id"`
+
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+
+	User User `gorm:"foreignkey:UserID"`
+}
 
 func Migrate() {
 	db := database.DB()
@@ -73,4 +90,5 @@ func Migrate() {
 	db.AutoMigrate(&Account{})
 	db.AutoMigrate(&UserWallet{})
 	db.AutoMigrate(&Currency{})
+	db.AutoMigrate(&Organization{})
 }
