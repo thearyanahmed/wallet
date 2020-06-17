@@ -8,7 +8,7 @@ import (
 	"github.com/thearyanahmed/wallet/internal/reminder"
 	"github.com/thearyanahmed/wallet/modules/currency"
 	userApi "github.com/thearyanahmed/wallet/modules/user"
-	"github.com/thearyanahmed/wallet/modules/user_wallet"
+	"github.com/thearyanahmed/wallet/modules/wallet"
 	"github.com/thearyanahmed/wallet/oauth"
 	"github.com/thearyanahmed/wallet/schema"
 	"log"
@@ -58,7 +58,7 @@ func main() {
 func registerRoutes(router *mux.Router) {
 
 	currency.RegisterRoutes(router)
-	user_wallet.RegisterRoutes(router)
+	wallet.RegisterRoutes(router)
 	userApi.RegisterRoutes(router)
 
 	router.HandleFunc("/protected", oauth.Auth(func(w http.ResponseWriter, r *http.Request) {

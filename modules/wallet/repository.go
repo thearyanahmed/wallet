@@ -1,4 +1,4 @@
-package user_wallet
+package wallet
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 type UserWalletRepository struct {
-	schema.UserWallet
+	schema.Wallet
 }
 
 func (uwr *UserWalletRepository) Test() {

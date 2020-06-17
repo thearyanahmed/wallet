@@ -1,4 +1,4 @@
-package account
+package organization
 
 type organizationService struct {
 	organizationRepository

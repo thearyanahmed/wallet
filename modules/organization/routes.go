@@ -1,4 +1,4 @@
-package account
+package organization
 
 import (
 	"github.com/gorilla/mux"

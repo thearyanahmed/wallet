@@ -16,7 +16,7 @@ type response struct {
 	Message string `json:"message,omitempty"`
 	Status string `json:"status"`
 	//ApplicationStatusCode int `json:"application_status_code,omitempty"`
-	Content interface{} `json:"content,omitempty"`
+	Data interface{} `json:"data,omitempty"`
 }
 
 // any error response strcut
@@ -29,12 +29,12 @@ type errResponse struct {
 }
 
 // represents any successful request
-func Send(w http.ResponseWriter,message string, content interface{},code int) {
+func Send(w http.ResponseWriter,message string, data interface{},code int) {
 	sendResponse(w,response{
 		Code:    code,
 		Status: SUCCESS,
 		Message: message,
-		Content: content,
+		Data: data,
 	},code)
 }
 

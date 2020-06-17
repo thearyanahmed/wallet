@@ -49,5 +49,13 @@ func prepareConnectionString(username, password, database, host, port string) st
 		username,password,host,port,database,
 	)
 }
+// does not work.
 
+func (manager *manager) CreateRecord(value interface{}, table string) (*interface{},[]error)  {
+	errs := manager.db.Create(&value).GetErrors()
 
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return &value, nil
+}
