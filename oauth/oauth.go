@@ -62,7 +62,7 @@ func Boot(router *mux.Router) {
 	})
 
 	// token memory store
-	manager.MustTokenStorage(store.NewMemoryTokenStore())
+	manager.MustTokenStorage(store.NewFileTokenStore("oauth.token.dev"))
 
 	// client memory store
 	clientStore = store.NewClientStore()

@@ -1,12 +1,12 @@
 package user
 
 import (
-	"net/http"
+	"github.com/gorilla/mux"
+	"github.com/thearyanahmed/wallet/internal/req"
 )
 
-func RegisterRoutes() {
-
+func RegisterRoutes(router *mux.Router) {
 	handler := NewHandler()
 
-	http.HandleFunc("/users",handler.CreateNewUser)
+	router.HandleFunc("/users",handler.createNewUser).Methods(req.POST)
 }

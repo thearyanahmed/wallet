@@ -2,6 +2,7 @@ package req
 
 import (
 	"github.com/thearyanahmed/wallet/internal/res"
+	"github.com/thedevsaddam/govalidator"
 	"net/http"
 )
 
@@ -12,6 +13,10 @@ const (
 	DELETE = "DELETE"
 )
 
+type Request struct {}
+
+// Deprecated
+// Use mux's router...().Method(type) instead
 func ReturnIfInvalidMethod(req *http.Request,method string,w http.ResponseWriter) bool {
 	if req.Method != method {
 		res.SendError(w,"Invalid method",nil,422)
@@ -20,3 +25,17 @@ func ReturnIfInvalidMethod(req *http.Request,method string,w http.ResponseWriter
 
 	return false
 }
+
+func (req *Request) Validate(r *http.Request,w http.ResponseWriter,validatorCallback func(*http.Request) *govalidator.Validator ) bool {
+	validator := validatorCallback(r)
+
+	e := validator.Validate()
+
+	if len(e) == 0 {
+		return true
+	}
+
+	res.SendError(w,"Invalid data.",e,422)
+	return false
+}
+

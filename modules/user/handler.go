@@ -1,6 +1,10 @@
 package user
 
-import "net/http"
+import (
+	request "github.com/thearyanahmed/wallet/internal/req"
+	"github.com/thearyanahmed/wallet/internal/res"
+	"net/http"
+)
 
 type handler struct {
 	userService
@@ -10,6 +14,14 @@ func NewHandler() *handler {
 	return &handler{userService{userRepository{}}}
 }
 
-func (handler *handler) CreateNewUser(w http.ResponseWriter,r *http.Request) {
+func (handler *handler) createNewUser(w http.ResponseWriter,r *http.Request) {
 
+	req := request.Request{}
+
+	if valid := req.Validate(r,w,createNewUserRequest); valid == false {
+		return
+	}
+
+	res.Send(w,"Reached here",nil,200)
 }
+

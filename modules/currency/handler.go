@@ -15,12 +15,6 @@ func NewHandler() *handler {
 
 func (handler *handler) currencies(w http.ResponseWriter,r *http.Request) {
 
-	//invalid := req.ReturnIfInvalidMethod(r,req.GET,w)
-	//
-	//if invalid {
-	//	return
-	//}
-
 	currencies, err := handler.currencyService.Currencies()
 
 	if err != nil {

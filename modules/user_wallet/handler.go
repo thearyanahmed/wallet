@@ -1,4 +1,4 @@
-package api
+package user_wallet
 
 import (
 	"github.com/thearyanahmed/wallet/internal/res"

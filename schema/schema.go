@@ -8,10 +8,17 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName string `gorm:"type:varchar(60);column:first_name;not null" json:"first_name"`
-	LastName string `gorm:"type:varchar(60);column:last_name;not null" json:"first_name"`
+	FirstName string `gorm:"type:varchar(12);column:first_name;not null" json:"first_name"`
+	LastName string `gorm:"type:varchar(12);column:last_name;not null" json:"first_name"`
 	Email string `gorm:"type:varchar(100);column:email;unique;not null" json:"email"`
 }
+
+const (
+	RegularAccount = 1
+	MerchantAccount = 2
+	OrganizationAccount = 3
+	AdminAccount = 4
+)
 
 type Account struct {
 	gorm.Model
