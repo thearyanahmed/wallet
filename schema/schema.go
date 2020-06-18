@@ -84,13 +84,13 @@ func (Currency) TableName() string {
 
 type Organization struct {
 	ID        uint `gorm:"primary_key" json:"id"`
-	Name string `gorm:"type:varchar(50);not null;unique" json:"name"` // USD
-	UserID uint32 `gorm:"type:integer;not null" json:"user_id"`
+	Name string `gorm:"type:varchar(50);not null" json:"name"` // USD
+	UserID uint `gorm:"type:integer;not null" json:"user_id"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"-"`
 	DeletedAt *time.Time `sql:"index" json:"-"`
 
-	User User `gorm:"foreignkey:UserID"`
+	User User `gorm:"foreignkey:user_id;association_foreignkey:id" json:"-"`
 }
 
 func Migrate() {

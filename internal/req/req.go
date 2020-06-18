@@ -59,7 +59,11 @@ func validated(requestParams map[string][]string, keys []string) map[string]stri
 		}
 	} else {
 		for _, key := range keys {
-			validated[key] = requestParams[key][0]
+			if len(requestParams[key]) > 0 {
+				validated[key] = requestParams[key][0]
+			} else {
+				validated[key] = ""
+			}
 		}
 	}
 
