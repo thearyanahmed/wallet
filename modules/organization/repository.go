@@ -14,10 +14,12 @@ func (repo *organizationRepository) createOrganization(userId uint,name string) 
 		Name:      name,
 		UserID:    userId,
 	}
+
 	err := database.DB().Create(&org).Error
 
 	if err != nil {
 		return nil, err
 	}
+
 	return &org, nil
 }

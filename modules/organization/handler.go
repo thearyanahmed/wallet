@@ -1,12 +1,15 @@
 package organization
 
 import (
+	"fmt"
+	"github.com/thearyanahmed/wallet/database"
 	request "github.com/thearyanahmed/wallet/internal/req"
 	"github.com/thearyanahmed/wallet/internal/res"
 	account "github.com/thearyanahmed/wallet/modules/account"
 	"github.com/thearyanahmed/wallet/modules/currency"
 	"github.com/thearyanahmed/wallet/modules/user"
 	"github.com/thearyanahmed/wallet/modules/wallet"
+	"github.com/thearyanahmed/wallet/schema"
 	"net/http"
 	"strconv"
 )
@@ -63,26 +66,36 @@ func (handler *handler) createNewOrganization(w http.ResponseWriter,r *http.Requ
 	accountSvc := account.Service{}
 	walletSvc := wallet.Service{}
 
-	org ,err := orgSvc.CreateOrganization(uint(userID),validated["name"])
+	var org *schema.Organization
+	var orgWallet *schema.Wallet
+	var orgAccount *schema.Account
+
+	dbManger := database.Manager
+
+	err := dbManger.Transact(func() error {
+		var err error
+		org , err = orgSvc.CreateOrganization(uint(userID),validated["name"])
+
+		if err != nil {
+			return err
+		}
+		orgWallet, err = walletSvc.CreateNewWallet(uint(userID),org.ID,currency.ID,validated["currency_code"])
+
+		if err != nil {
+			return err
+		}
+
+		orgAccount, err = accountSvc.CreateNewAccount(uint(userID),org.ID,validated["currency_code"])
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 
 	if err != nil {
-		res.SendError(w,res.UnprocessableEntity,errs,422)
-		return
-	}
-	// begin transaction
-
-	orgAccount, err := accountSvc.CreateNewAccount(uint(userID),org.ID,validated["currency_code"])
-
-	if err != nil {
-		res.SendError(w,res.UnprocessableEntity,errs,422)
-		return
-	}
-
-	orgWallet, err := walletSvc.CreateNewWallet(uint(userID),org.ID,currency.ID,validated["currency_code"])
-
-	if err != nil {
-		res.SendError(w,res.UnprocessableEntity,errs,422)
-		return
+		res.SendError(w,res.UnprocessableEntity,err.Error(),422)
 	}
 
 	// end transaction
@@ -104,6 +117,7 @@ func (handler *handler) createNewOrganization(w http.ResponseWriter,r *http.Requ
 			TotalBalance:     orgWallet.TotalBalance,
 		},
 	}
+	fmt.Println(response)
 
 	res.Send(w,orgCreatedSuccessfully,response,200)
 
