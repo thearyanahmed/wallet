@@ -1,7 +1,6 @@
 package currency
 
 import (
-	"fmt"
 	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/schema"
 )
@@ -15,9 +14,20 @@ func (cr *currencyRepository) Currencies() ( []schema.Currency, error ) {
 	var records []schema.Currency
 
 	if err:= database.DB().Find(&records).Error; err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	return records, nil
+}
+
+func (cr *currencyRepository) findCurrencyByCode(code string) ( *schema.Currency, []error ) {
+	var currency schema.Currency
+
+	errs := database.DB().Where("code = ?",code).First(&currency).GetErrors()
+
+	if len(errs) > 0 {
+		return nil, errs
+	}
+
+	return &currency, nil
 }

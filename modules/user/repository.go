@@ -22,3 +22,16 @@ func createNewUser(firstName, lastName, email string) (*schema.User,[]error) {
 	}
 	return &user, nil
 }
+
+
+func (userRepo *userRepository) findUserById(id uint) ( *schema.User, []error ) {
+	var user schema.User
+
+	errs := database.DB().Where("id = ?",id).First(&user).GetErrors()
+
+	if len(errs) > 0 {
+		return nil, errs
+	}
+
+	return &user, nil
+}

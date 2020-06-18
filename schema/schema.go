@@ -34,10 +34,10 @@ const (
 )
 
 type Account struct {
-	UserID int32 `gorm:"type:integer;column:user_id;not null" json:"user_id"`
-	RefID string `gorm:"type:varchar(30);column:ref_id;unique;not null" json:"ref_id"`
+	UserID uint `gorm:"type:integer;column:user_id;not null" json:"user_id"`
+	RefID string `gorm:"type:varchar(32);column:ref_id;unique;not null" json:"ref_id"`
 	Type int8 `gorm:"type:tinyint(1);defualt:1;not null" json:"type"` //TODO learn to use variables inside template strings
-	OrgID int32 `gorm:"type:integer;column:org_id;not null" json:"org_id"`
+	OrgID uint `gorm:"type:integer;column:org_id;not null" json:"org_id"`
 	DefaultWalletCurrency string `gorm:"type:varchar(5);default:'USD';not null" json:"default_wallet_currency"` // TODO use enum
 
 	ID uint `gorm:"primary_key" json:"id"`
@@ -51,10 +51,10 @@ type Account struct {
 }
 
 type Wallet struct {
-	UserID int32 `gorm:"type:integer;not null" json:"user_id"`
-	AccountID int32 `gorm:"type:integer;not null" json:"account_id"`
+	UserID uint `gorm:"type:integer;not null" json:"user_id"`
+	AccountID uint `gorm:"type:integer;not null" json:"account_id"`
 	CurrencyCode string `gorm:"type:varchar(5);not null" json:"currency_code"`
-	CurrencyID int8 `gorm:"type:tinyint(1);not null" json:"currency_id"`
+	CurrencyID uint `gorm:"type:tinyint(1);not null" json:"currency_id"`
 	AvailableBalance int64 `gorm:"column:available_balance;default:0;not null" json:"available_balance"`
 	TotalBalance int64 `gorm:"column:total_balance;default:0;not null" json:"total_balance"`
 

@@ -9,7 +9,7 @@ type organizationRepository struct {
 	schema.Organization
 }
 
-func createOrganization(userId uint,name string) (*schema.Organization,[]error) {
+func (repo *organizationRepository) createOrganization(userId uint,name string) (*schema.Organization,[]error) {
 	org := schema.Organization{
 		Name:      name,
 		UserID:    userId,

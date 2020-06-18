@@ -7,7 +7,7 @@ import (
 )
 
 type handler struct {
-	userService
+	Service
 }
 
 const (
@@ -15,7 +15,7 @@ const (
 )
 
 func NewHandler() *handler {
-	return &handler{userService{userRepository{}}}
+	return &handler{Service{userRepository{}}}
 }
 
 func (handler *handler) createNewUser(w http.ResponseWriter,r *http.Request) {

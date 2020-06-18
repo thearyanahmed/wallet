@@ -6,16 +6,16 @@ import (
 )
 
 type handler struct {
-	currencyService
+	Service
 }
 
 func NewHandler() *handler {
-	return &handler{currencyService{currencyRepository{}}}
+	return &handler{Service{currencyRepository{}}}
 }
 
 func (handler *handler) currencies(w http.ResponseWriter,r *http.Request) {
 
-	currencies, err := handler.currencyService.Currencies()
+	currencies, err := handler.Service.Currencies()
 
 	if err != nil {
 		res.SendError(w,err.Error(),err.Error(),422)

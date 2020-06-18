@@ -8,6 +8,9 @@ import (
 const (
 	SUCCESS = "SUCCESS"
 	ERROR = "ERROR"
+
+	UnsupportedEntity = "Unsupported entity."
+	UnprocessableEntity = "Unprocessable entity."
 )
 
 // a basic/generic response struct

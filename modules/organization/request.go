@@ -23,7 +23,7 @@ func createNewOrganizationRequest(r *http.Request) *govalidator.Validator {
 		RequiredDefault: false,
 		Rules:           rules,
 		Messages:        messages,
-		FormSize:        10,
+		FormSize:        1000,
 	}
 
 	return govalidator.New(options)

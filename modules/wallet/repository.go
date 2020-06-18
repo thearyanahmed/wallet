@@ -1,15 +1,27 @@
 package wallet
 
 import (
-	"fmt"
+	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/schema"
 )
 
-type UserWalletRepository struct {
+type walletRepository struct {
 	schema.Wallet
 }
 
-func (uwr *UserWalletRepository) Test() {
-	fmt.Println("ello world")
-}
+func (repo *walletRepository) createNewWallet(userID, accountID ,currencyID uint, currencyCode string) (*schema.Wallet,[]error) {
+	wallet := schema.Wallet{
+		UserID:           userID,
+		AccountID:        accountID,
+		CurrencyCode:     currencyCode,
+		CurrencyID:       currencyID,
+		AvailableBalance: 0,
+		TotalBalance:     0,
+	}
+	errs := database.DB().Create(&wallet).GetErrors()
 
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return &wallet, nil
+}
