@@ -5,10 +5,12 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"os"
+	"sync"
 )
 
 type manager struct {
 	db *gorm.DB
+	mux sync.Mutex
 }
 
 var Manager manager
@@ -50,21 +52,30 @@ func prepareConnectionString(username, password, database, host, port string) st
 	)
 }
 
-func (manager *manager) Transact(callback func() error) error {
-	db := Manager.db
-	tx := Manager.db.Begin()
+func (manager *manager) Transact(callback func(tx *gorm.DB) error) error {
+	db := manager.db
+
+	manager.mux.Lock()
+
+	tx := manager.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
 		}
-		Manager.db = db
+		manager.db = db
+		manager.mux.Unlock()
 	}()
 
 	if err := tx.Error; err != nil {
 		return err
 	}
 
-	callback()
+	err := callback(tx)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
 
 	return nil
 }

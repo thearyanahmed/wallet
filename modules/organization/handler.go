@@ -1,7 +1,7 @@
 package organization
 
 import (
-	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/thearyanahmed/wallet/database"
 	request "github.com/thearyanahmed/wallet/internal/req"
 	"github.com/thearyanahmed/wallet/internal/res"
@@ -72,22 +72,25 @@ func (handler *handler) createNewOrganization(w http.ResponseWriter,r *http.Requ
 
 	dbManger := database.Manager
 
-	err := dbManger.Transact(func() error {
+	err := dbManger.Transact(func(tx *gorm.DB) error {
 		var err error
 		org , err = orgSvc.CreateOrganization(uint(userID),validated["name"])
 
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 		orgWallet, err = walletSvc.CreateNewWallet(uint(userID),org.ID,currency.ID,validated["currency_code"])
 
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 
 		orgAccount, err = accountSvc.CreateNewAccount(uint(userID),org.ID,validated["currency_code"])
 
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 
@@ -98,7 +101,6 @@ func (handler *handler) createNewOrganization(w http.ResponseWriter,r *http.Requ
 		res.SendError(w,res.UnprocessableEntity,err.Error(),422)
 	}
 
-	// end transaction
 
 	response := createdResponse{
 		Organization: orgResponse{
@@ -117,7 +119,6 @@ func (handler *handler) createNewOrganization(w http.ResponseWriter,r *http.Requ
 			TotalBalance:     orgWallet.TotalBalance,
 		},
 	}
-	fmt.Println(response)
 
 	res.Send(w,orgCreatedSuccessfully,response,200)
 
