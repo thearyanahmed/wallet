@@ -9,7 +9,7 @@ type walletRepository struct {
 	schema.Wallet
 }
 
-func (repo *walletRepository) createNewWallet(userID, accountID ,currencyID uint, currencyCode string) (*schema.Wallet,[]error) {
+func (repo *walletRepository) createNewWallet(userID, accountID ,currencyID uint, currencyCode string) (*schema.Wallet,error) {
 	wallet := schema.Wallet{
 		UserID:           userID,
 		AccountID:        accountID,
@@ -18,10 +18,10 @@ func (repo *walletRepository) createNewWallet(userID, accountID ,currencyID uint
 		AvailableBalance: 0,
 		TotalBalance:     0,
 	}
-	errs := database.DB().Create(&wallet).GetErrors()
+	err := database.DB().Create(&wallet).Error
 
-	if len(errs) > 0 {
-		return nil, errs
+	if err != nil {
+		return nil, err
 	}
 	return &wallet, nil
 }

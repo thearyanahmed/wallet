@@ -11,7 +11,7 @@ type accountRepository struct {
 	schema.Account
 }
 
-func (accountRepo *accountRepository) createNewAccount(userID, orgID uint, currencyCode string) (*schema.Account,[]error) {
+func (accountRepo *accountRepository) createNewAccount(userID, orgID uint, currencyCode string) (*schema.Account,error) {
 
 	uniqueAccountID := uuid.Must(uuid.NewRandom())
 
@@ -24,10 +24,10 @@ func (accountRepo *accountRepository) createNewAccount(userID, orgID uint, curre
 		OrgID:                 orgID,
 		DefaultWalletCurrency: currencyCode,
 	}
-	errs := database.DB().Create(&account).GetErrors()
+	err := database.DB().Create(&account).Error
 
-	if len(errs) > 0 {
-		return nil, errs
+	if err != nil {
+		return nil, err
 	}
 	return &account, nil
 }

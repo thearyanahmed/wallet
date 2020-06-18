@@ -9,15 +9,15 @@ type organizationRepository struct {
 	schema.Organization
 }
 
-func (repo *organizationRepository) createOrganization(userId uint,name string) (*schema.Organization,[]error) {
+func (repo *organizationRepository) createOrganization(userId uint,name string) (*schema.Organization,error) {
 	org := schema.Organization{
 		Name:      name,
 		UserID:    userId,
 	}
-	errs := database.DB().Create(&org).GetErrors()
+	err := database.DB().Create(&org).Error
 
-	if len(errs) > 0 {
-		return nil, errs
+	if err != nil {
+		return nil, err
 	}
 	return &org, nil
 }

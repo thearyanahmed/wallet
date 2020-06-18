@@ -6,6 +6,6 @@ type Service struct {
 	accountRepository
 }
 
-func (service *Service) CreateNewAccount(userID, orgID uint, currencyCode string) (*schema.Account,[]error) {
+func (service *Service) CreateNewAccount(userID, orgID uint, currencyCode string) (*schema.Account,error) {
 	return service.accountRepository.createNewAccount(userID,orgID,currencyCode)
 }

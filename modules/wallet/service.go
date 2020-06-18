@@ -6,6 +6,6 @@ type Service struct {
 	walletRepository
 }
 
-func (service *Service) CreateNewWallet(userID, accountID ,currencyID uint, currencyCode string) (*schema.Wallet,[]error){
+func (service *Service) CreateNewWallet(userID, accountID ,currencyID uint, currencyCode string) (*schema.Wallet,error){
 	return service.walletRepository.createNewWallet(userID , accountID, currencyID, currencyCode)
 }

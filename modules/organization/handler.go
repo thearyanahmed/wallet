@@ -59,31 +59,28 @@ func (handler *handler) createNewOrganization(w http.ResponseWriter,r *http.Requ
 		return
 	}
 
-	// begin transaction
-
 	orgSvc := Service{}
-
-	org, errs := orgSvc.CreateOrganization(uint(userID),validated["name"])
-
-	if len(errs) > 0 {
-		res.SendError(w,res.UnprocessableEntity,errs,422)
-		return
-	}
-
 	accountSvc := account.Service{}
-
-	orgAccount, errs := accountSvc.CreateNewAccount(uint(userID),org.ID,validated["currency_code"])
-
-	if len(errs) > 0 {
-		res.SendError(w,res.UnprocessableEntity,errs,422)
-		return
-	}
-
 	walletSvc := wallet.Service{}
 
-	orgWallet, errs := walletSvc.CreateNewWallet(uint(userID),org.ID,currency.ID,validated["currency_code"])
+	org ,err := orgSvc.CreateOrganization(uint(userID),validated["name"])
 
-	if len(errs) > 0 {
+	if err != nil {
+		res.SendError(w,res.UnprocessableEntity,errs,422)
+		return
+	}
+	// begin transaction
+
+	orgAccount, err := accountSvc.CreateNewAccount(uint(userID),org.ID,validated["currency_code"])
+
+	if err != nil {
+		res.SendError(w,res.UnprocessableEntity,errs,422)
+		return
+	}
+
+	orgWallet, err := walletSvc.CreateNewWallet(uint(userID),org.ID,currency.ID,validated["currency_code"])
+
+	if err != nil {
 		res.SendError(w,res.UnprocessableEntity,errs,422)
 		return
 	}
