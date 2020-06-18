@@ -1,10 +1,8 @@
 package account
 
 import (
-	"github.com/google/uuid"
 	"github.com/thearyanahmed/wallet/database"
 	"github.com/thearyanahmed/wallet/schema"
-	"strings"
 )
 
 type accountRepository struct {
@@ -13,13 +11,13 @@ type accountRepository struct {
 
 func (accountRepo *accountRepository) createNewAccount(userID, orgID uint, currencyCode string) (*schema.Account,error) {
 
-	uniqueAccountID := uuid.Must(uuid.NewRandom())
+	//uniqueAccountID := uuid.Must(uuid.NewRandom())
 
-	ref := strings.ReplaceAll(uniqueAccountID.String(),"-","")
+	//ref := strings.ReplaceAll(uniqueAccountID.String(),"-","")
 
 	account := schema.Account{
 		UserID:                userID,
-		RefID:                 ref,
+		RefID:                 "asdasdasdasdasdasdasdasdadasdasdassasdasd",
 		Type:                  schema.OrganizationAccount,
 		OrgID:                 orgID,
 		DefaultWalletCurrency: currencyCode,

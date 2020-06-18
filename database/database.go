@@ -11,6 +11,7 @@ import (
 type manager struct {
 	db *gorm.DB
 	mux sync.Mutex
+	useTransaction bool
 }
 
 var Manager manager
@@ -29,7 +30,7 @@ func Connect() ( *gorm.DB, error ) {
 	}
 
 	bootsrap(db)
-	Manager = manager{db: db}
+	Manager = manager{db: db,useTransaction: false}
 	return db, nil
 }
 
@@ -52,30 +53,42 @@ func prepareConnectionString(username, password, database, host, port string) st
 	)
 }
 
-func (manager *manager) Transact(callback func(tx *gorm.DB) error) error {
-	db := manager.db
+func (manager *manager) Transaction(callback func() error) error {
 
-	manager.mux.Lock()
+	//manager.BeginTransaction()
+	//
+	//err := callback()
+	//
+	//if err != nil {
+	//	fmt.Println("Got error from callback")
+	//	manager.Rollback()
+	//	return err
+	//} else {
+	//	manager.Commit()
+	//	return nil
+	//}
 
-	tx := manager.db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-		manager.db = db
-		manager.mux.Unlock()
-	}()
+	manager.db = manager.db.Begin()
 
-	if err := tx.Error; err != nil {
-		return err
-	}
-
-	err := callback(tx)
+	err := callback()
 
 	if err != nil {
-		tx.Rollback()
+		manager.db.Begin().Rollback()
 		return err
 	}
 
+	manager.db.Commit()
 	return nil
+}
+
+func (manager *manager) BeginTransaction() {
+	DB().Exec("START TRANSACTION")
+}
+
+func (manager *manager) Commit() {
+	DB().Exec("COMMIT")
+}
+
+func (manager *manager) Rollback() {
+	DB().Exec("ROLLBACK")
 }
